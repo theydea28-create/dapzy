@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drive Foto - Unggah & Download Foto</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            color: #202124;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #e0e0e0;
+            margin-bottom: 30px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 22px;
+            font-weight: 500;
+            color: #5f6368;
+        }
+
+        .logo-icon {
+            color: #4285f4;
+            font-size: 28px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background-color: #4285f4;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 3fr;
+            gap: 20px;
+        }
+
+        .sidebar {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar h3 {
+            margin-bottom: 15px;
+            color: #5f6368;
+            font-weight: 500;
+        }
+
+        .sidebar ul {
+            list-style: none;
+        }
+
+        .sidebar li {
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sidebar li:hover {
+            background-color: #f1f3f4;
+        }
+
+        .sidebar li.active {
+            background-color: #e8f0fe;
+            color: #1967d2;
+        }
+
+        .content {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .content-header h2 {
+            font-weight: 400;
+            color: #202124;
+        }
+
+        .upload-btn {
+            background-color: #1a73e8;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .upload-btn:hover {
+            background-color: #1669d6;
+        }
+
+        .upload-area {
+            border: 2px dashed #dadce0;
+            border-radius: 8px;
+            padding: 40px 20px;
+            text-align: center;
+            margin-bottom: 30px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .upload-area:hover {
+            border-color: #1a73e8;
+            background-color: #f8f9fa;
+        }
+
+        .upload-icon {
+            font-size: 48px;
+            color: #5f6368;
+            margin-bottom: 10px;
+        }
+
+        .upload-text {
+            color: #5f6368;
+            margin-bottom: 10px;
+        }
+
+        .upload-hint {
+            font-size: 14px;
+            color: #80868b;
+        }
+
+        #file-input {
+            display: none;
+        }
+
+        .photos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .photo-card {
+            border: 1px solid #dadce0;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        .photo-card:hover {
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .photo-thumbnail {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            background-color: #f8f9fa;
+        }
+
+        .photo-info {
+            padding: 12px;
+        }
+
+        .photo-name {
+            font-weight: 500;
+            margin-bottom: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .photo-details {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #5f6368;
+        }
+
+        .photo-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .action-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #5f6368;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .action-btn:hover {
+            color: #1a73e8;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #5f6368;
+        }
+
+        .empty-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+            color: #dadce0;
+        }
+
+        .counter {
+            margin-top: 15px;
+            font-size: 14px;
+            color: #5f6368;
+        }
+
+        .counter.warning {
+            color: #ea4335;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                display: none;
+            }
+            
+            .photos-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <span class="logo-icon">📁</span>
+                <span>Drive Foto</span>
+            </div>
+            <div class="user-info">
+                <div class="user-avatar">A</div>
+                <span>Anda</span>
+            </div>
+        </header>
+
+        <div class="main-content">
+            <aside class="sidebar">
+                <h3>Menu</h3>
+                <ul>
+                    <li class="active">
+                        <span>📷</span>
+                        <span>Foto Saya</span>
+                    </li>
+                    <li>
+                        <span>⭐</span>
+                        <span>Foto Favorit</span>
+                    </li>
+                    <li>
+                        <span>🔄</span>
+                        <span>Baru-baru ini</span>
+                    </li>
+                    <li>
+                        <span>🗑️</span>
+                        <span>Sampah</span>
+                    </li>
+                </ul>
+            </aside>
+
+            <main class="content">
+                <div class="content-header">
+                    <h2>Foto Saya</h2>
+                    <button class="upload-btn" id="upload-trigger">
+                        <span>+</span>
+                        <span>Unggah Foto</span>
+                    </button>
+                </div>
+
+                <div class="upload-area" id="upload-area">
+                    <div class="upload-icon">📤</div>
+                    <div class="upload-text">Seret foto ke sini atau klik untuk mengunggah</div>
+                    <div class="upload-hint">Maksimal 10 foto (JPG, PNG, GIF)</div>
+                    <input type="file" id="file-input" accept="image/*" multiple>
+                </div>
+
+                <div class="counter" id="counter">0/10 foto terunggah</div>
+
+                <div class="photos-grid" id="photos-grid">
+                    <!-- Foto akan ditampilkan di sini -->
+                    <div class="empty-state">
+                        <div class="empty-icon">📷</div>
+                        <div>Belum ada foto yang diunggah</div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const fileInput = document.getElementById('file-input');
+            const uploadArea = document.getElementById('upload-area');
+            const uploadTrigger = document.getElementById('upload-trigger');
+            const photosGrid = document.getElementById('photos-grid');
+            const counter = document.getElementById('counter');
+            
+            let uploadedPhotos = [];
+            const maxPhotos = 10;
+
+            // Event listener untuk area unggah
+            uploadArea.addEventListener('click', function() {
+                fileInput.click();
+            });
+
+            uploadTrigger.addEventListener('click', function() {
+                fileInput.click();
+            });
+
+            // Event listener untuk drag & drop
+            uploadArea.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                uploadArea.style.borderColor = '#1a73e8';
+                uploadArea.style.backgroundColor = '#f8f9fa';
+            });
+
+            uploadArea.addEventListener('dragleave', function() {
+                uploadArea.style.borderColor = '#dadce0';
+                uploadArea.style.backgroundColor = '';
+            });
+
+            uploadArea.addEventListener('drop', function(e) {
+                e.preventDefault();
+                uploadArea.style.borderColor = '#dadce0';
+                uploadArea.style.backgroundColor = '';
+                
+                if (e.dataTransfer.files.length > 0) {
+                    handleFiles(e.dataTransfer.files);
+                }
+            });
+
+            // Event listener untuk input file
+            fileInput.addEventListener('change', function() {
+                if (this.files.length > 0) {
+                    handleFiles(this.files);
+                    this.value = ''; // Reset input
+                }
+            });
+
+            // Fungsi untuk menangani file yang diunggah
+            function handleFiles(files) {
+                const remainingSlots = maxPhotos - uploadedPhotos.length;
+                
+                if (files.length > remainingSlots) {
+                    alert(`Anda hanya dapat mengunggah ${remainingSlots} foto lagi.`);
+                    files = Array.from(files).slice(0, remainingSlots);
+                }
+                
+                for (let i = 0; i < files.length; i++) {
+                    const file = files[i];
+                    
+                    if (!file.type.match('image.*')) {
+                        alert('Hanya file gambar yang diizinkan.');
+                        continue;
+                    }
+                    
+                    const reader = new FileReader();
+                    
+                    reader.onload = function(e) {
+                        const photoData = {
+                            id: Date.now() + i,
+                            name: file.name,
+                            size: formatFileSize(file.size),
+                            date: new Date().toLocaleDateString('id-ID'),
+                            url: e.target.result
+                        };
+                        
+                        uploadedPhotos.push(photoData);
+                        updatePhotosGrid();
+                        updateCounter();
+                    };
+                    
+                    reader.readAsDataURL(file);
+                }
+            }
+
+            // Fungsi untuk memperbarui grid foto
+            function updatePhotosGrid() {
+                if (uploadedPhotos.length === 0) {
+                    photosGrid.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-icon">📷</div>
+                            <div>Belum ada foto yang diunggah</div>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                photosGrid.innerHTML = '';
+                
+                uploadedPhotos.forEach(photo => {
+                    const photoCard = document.createElement('div');
+                    photoCard.className = 'photo-card';
+                    
+                    photoCard.innerHTML = `
+                        <img src="${photo.url}" alt="${photo.name}" class="photo-thumbnail">
+                        <div class="photo-info">
+                            <div class="photo-name">${photo.name}</div>
+                            <div class="photo-details">
+                                <span>${photo.size}</span>
+                                <span>${photo.date}</span>
+                            </div>
+                            <div class="photo-actions">
+                                <button class="action-btn download-btn" data-id="${photo.id}">
+                                    <span>⬇️</span>
+                                    <span>Download</span>
+                                </button>
+                                <button class="action-btn delete-btn" data-id="${photo.id}">
+                                    <span>🗑️</span>
+                                    <span>Hapus</span>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    
+                    photosGrid.appendChild(photoCard);
+                });
+                
+                // Tambahkan event listener untuk tombol download dan hapus
+                document.querySelectorAll('.download-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const photoId = this.getAttribute('data-id');
+                        downloadPhoto(photoId);
+                    });
+                });
+                
+                document.querySelectorAll('.delete-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const photoId = this.getAttribute('data-id');
+                        deletePhoto(photoId);
+                    });
+                });
+            }
+
+            // Fungsi untuk mengunduh foto
+            function downloadPhoto(photoId) {
+                const photo = uploadedPhotos.find(p => p.id == photoId);
+                
+                if (photo) {
+                    const a = document.createElement('a');
+                    a.href = photo.url;
+                    a.download = photo.name;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                }
+            }
+
+            // Fungsi untuk menghapus foto
+            function deletePhoto(photoId) {
+                if (confirm('Apakah Anda yakin ingin menghapus foto ini?')) {
+                    uploadedPhotos = uploadedPhotos.filter(p => p.id != photoId);
+                    updatePhotosGrid();
+                    updateCounter();
+                }
+            }
+
+            // Fungsi untuk memperbarui counter
+            function updateCounter() {
+                counter.textContent = `${uploadedPhotos.length}/${maxPhotos} foto terunggah`;
+                
+                if (uploadedPhotos.length >= maxPhotos) {
+                    counter.classList.add('warning');
+                } else {
+                    counter.classList.remove('warning');
+                }
+            }
+
+            // Fungsi untuk memformat ukuran file
+            function formatFileSize(bytes) {
+                if (bytes === 0) return '0 Bytes';
+                
+                const k = 1024;
+                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            }
+        });
+    </script>
+</body>
+</html>
